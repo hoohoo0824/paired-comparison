@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="一対比較法">
+    <title>一対比較法 評価ツール</title>
+    <style>
+/* ========================================
+   一対比較法 iPad Web App - Stylesheet
+   ======================================== */
+
+:root {
+    --bg-primary: #0f0f1a;
+    --bg-secondary: #1a1a2e;
+    --bg-card: #242442;
+    --bg-card-hover: #2d2d50;
+    --bg-input: #1e1e36;
+    --text-primary: #e8e8f0;
+    --text-secondary: #9999b3;
+    --text-muted: #666680;
+    --accent: #6c5ce7;
+    --accent-light: #a29bfe;
+    --accent-glow: rgba(108, 92, 231, 0.3);
+    --success: #00cec9;
+    --success-glow: rgba(0, 206, 201, 0.2);
+    --warning: #fdcb6e;
+    --danger: #e17055;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-focus: rgba(108, 92, 231, 0.5);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-xs: 6px;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Scale colors */
+    --scale-1: #6c5ce7;
+    --scale-2: #a29bfe;
+    --scale-3: #636e72;
+    --scale-4: #00b894;
+    --scale-5: #00cec9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* ===== Screen Management ===== */
+.screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+}
+
+/* ===== START SCREEN ===== */
+.start-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 40px;
+    gap: 32px;
+}
+
+.app-logo {
+    text-align: center;
+}
+
+.logo-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 20px var(--accent-glow));
+}
+
+.app-logo h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--accent-light), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.app-logo .subtitle {
+    display: block;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    margin-top: 4px;
+}
+
+.start-form {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.form-group input {
+    background: var(--bg-input);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 18px;
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: var(--transition);
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.group-selector {
+    display: flex;
+    gap: 14px;
+}
+
+.group-btn {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.group-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.group-btn.selected {
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(0, 206, 201, 0.1));
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow);
+}
+
+.group-letter {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent-light);
+}
+
+.group-desc {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.group-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), #5741d9);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 16px 32px;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--bg-card-hover);
+    border-color: var(--accent);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ===== EVALUATION SCREEN ===== */
+.eval-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.eval-info {
+    display: flex;
+    gap: 10px;
+}
+
+.info-badge {
+    background: var(--bg-card);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.info-badge.accent {
+    background: rgba(108, 92, 231, 0.2);
+    color: var(--accent-light);
+}
+
+.eval-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.progress-bar {
+    width: 180px;
+    height: 6px;
+    background: var(--bg-card);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+}
+
+/* ===== EVAL BODY ===== */
+.eval-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 16px 24px;
+    gap: 12px;
+}
+
+/* ===== VIDEO AREA ===== */
+.video-area {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 34%;
+}
+
+.video-panel {
+    flex: 1;
+    max-width: 45%;
+    position: relative;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 2px solid var(--border);
+}
+
+.video-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-light);
+    z-index: 10;
+}
+
+.video-panel video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+    max-height: 220px;
+}
+
+.video-controls {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.btn-play {
+    background: rgba(108, 92, 231, 0.8);
+    backdrop-filter: blur(8px);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.btn-play:hover {
+    background: var(--accent);
+}
+
+.btn-play.playing {
+    background: rgba(225, 112, 85, 0.8);
+}
+
+.vs-divider {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    flex-shrink: 0;
+}
+
+/* ===== EVALUATION ITEMS ===== */
+.eval-items-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.eval-items-header {
+    padding: 10px 20px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.scale-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.scale-end {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.scale-center {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.eval-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.eval-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: background 0.2s;
+}
+
+.eval-item:last-child {
+    border-bottom: none;
+}
+
+.eval-item:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.eval-item-label {
+    width: 140px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+
+.eval-scale {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px;
+}
+
+.scale-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg-input);
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scale-btn:hover {
+    border-color: var(--accent);
+    background: rgba(108, 92, 231, 0.1);
+    color: var(--text-primary);
+    transform: scale(1.08);
+}
+
+.scale-btn.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.scale-btn.selected[data-value="1"] {
+    background: var(--scale-1);
+    border-color: var(--scale-1);
+    color: white;
+}
+
+.scale-btn.selected[data-value="2"] {
+    background: var(--scale-2);
+    border-color: var(--scale-2);
+    color: white;
+}
+
+.scale-btn.selected[data-value="3"] {
+    background: var(--scale-3);
+    border-color: var(--scale-3);
+    color: white;
+}
+
+.scale-btn.selected[data-value="4"] {
+    background: var(--scale-4);
+    border-color: var(--scale-4);
+    color: white;
+}
+
+.scale-btn.selected[data-value="5"] {
+    background: var(--scale-5);
+    border-color: var(--scale-5);
+    color: white;
+}
+
+.eval-item-check {
+    width: 28px;
+    font-size: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* ===== EVAL FOOTER ===== */
+.eval-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+/* ===== SCREEN C (Table Only) ===== */
+.eval-body-c {
+    justify-content: flex-start;
+    padding-top: 24px;
+}
+
+.pair-label-c {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.pair-item-c {
+    font-size: 28px;
+    font-weight: 700;
+    padding: 14px 40px;
+    border-radius: var(--radius);
+    letter-spacing: 1px;
+}
+
+.pair-item-c.left {
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(108, 92, 231, 0.05));
+    border: 2px solid rgba(108, 92, 231, 0.3);
+    color: var(--accent-light);
+}
+
+.pair-item-c.right {
+    background: linear-gradient(135deg, rgba(0, 206, 201, 0.2), rgba(0, 206, 201, 0.05));
+    border: 2px solid rgba(0, 206, 201, 0.3);
+    color: var(--success);
+}
+
+.vs-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+}
+
+.eval-items-container-c {
+    flex: 1;
+    min-height: 0;
+}
+
+/* ===== RESULT SCREEN ===== */
+.result-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 40px;
+    gap: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.result-icon {
+    font-size: 64px;
+    animation: pop 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.result-container h2 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--success), var(--accent-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.result-summary {
+    color: var(--text-secondary);
+    font-size: 16px;
+    text-align: center;
+}
+
+.result-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.result-table-container {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 16px;
+    max-height: 500px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.result-section {
+    margin-bottom: 24px;
+}
+
+.result-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.matrix-item-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-light);
+    padding: 10px 16px 4px;
+}
+
+.matrix-table {
+    margin-bottom: 8px;
+}
+
+.matrix-table td,
+.matrix-table th {
+    min-width: 44px;
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.result-table th {
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.result-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.result-table tr:hover td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-card-hover);
+    border-radius: 3px;
+}
+
+/* ===== iPad Landscape ===== */
+@media (min-width: 1024px) {
+    .eval-body {
+        flex-direction: row;
+    }
+
+    .video-area {
+        width: 50%;
+        height: 100%;
+        flex-direction: column;
+    }
+
+    .video-panel {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .video-panel video {
+        max-height: none;
+        height: 100%;
+    }
+
+    .vs-divider {
+        writing-mode: horizontal-tb;
+    }
+
+    .eval-items-container {
+        width: 50%;
+    }
+}
+
+/* ===== iPad Portrait ===== */
+@media (max-width: 1023px) {
+    .video-area {
+        height: 30%;
+    }
+
+    .video-panel video {
+        max-height: 180px;
+    }
+
+    .scale-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .eval-item-label {
+        width: 110px;
+        font-size: 13px;
+    }
+}
+
+/* ===== Prevent text selection during evaluation ===== */
+.eval-body,
+.eval-body-c {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* ===== HISTORY PANEL ===== */
+.history-toggle {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 100;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-right: none;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    padding: 12px 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: var(--transition);
+}
+
+.history-toggle:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent);
+    padding-right: 16px;
+}
+
+.history-icon {
+    font-size: 20px;
+}
+
+.history-count {
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.history-count.empty {
+    background: var(--text-muted);
+}
+
+.history-panel {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 380px;
+    height: 100%;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.3);
+}
+
+.history-panel.open {
+    right: 0;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.history-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.history-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.history-close:hover {
+    color: var(--text-primary);
+    background: var(--bg-card-hover);
+}
+
+.history-actions-top {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 13px;
+    width: 100%;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+}
+
+.history-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+    font-size: 14px;
+}
+
+.history-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    transition: var(--transition);
+}
+
+.history-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-card-hover);
+}
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.history-card-id {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--accent-light);
+}
+
+.history-card-group {
+    font-size: 12px;
+    background: rgba(108, 92, 231, 0.2);
+    color: var(--accent-light);
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+
+.history-card-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.history-card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.history-card-actions button {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: inherit;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid var(--border);
+    background: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.history-card-actions button:hover {
+    border-color: var(--accent);
+    background: rgba(108, 92, 231, 0.1);
+}
+
+.history-card-actions .btn-delete:hover {
+    border-color: var(--danger);
+    background: rgba(225, 112, 85, 0.1);
+    color: var(--danger);
+}
+
+.history-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.history-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+</style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- ===== START SCREEN ===== -->
+    <div id="screen-start" class="screen active">
+        <div class="start-container">
+            <div class="app-logo">
+                <div class="logo-icon">⚖</div>
+                <h1>一対比較法<span class="subtitle">評価ツール</span></h1>
+            </div>
+            <div class="start-form">
+                <div class="form-group">
+                    <label for="subject-id">被験者ID</label>
+                    <input type="text" id="subject-id" placeholder="例：S001" autocomplete="off" autocorrect="off">
+                </div>
+                <div class="form-group">
+                    <label>実験グループを選択</label>
+                    <div class="group-selector">
+                        <button class="group-btn" data-group="A">
+                            <span class="group-letter">A</span>
+                            <span class="group-desc">FOV × 動線</span>
+                            <span class="group-detail">6条件 · 15ペア · 6項目</span>
+                        </button>
+                        <button class="group-btn" data-group="B">
+                            <span class="group-letter">B</span>
+                            <span class="group-desc">照明 × BGM</span>
+                            <span class="group-detail">4条件 · 6ペア · 7項目</span>
+                        </button>
+                        <button class="group-btn" data-group="C">
+                            <span class="group-letter">C</span>
+                            <span class="group-desc">作品サイズ</span>
+                            <span class="group-detail">3条件 · 3ペア · 5項目</span>
+                        </button>
+                    </div>
+                </div>
+                <button id="btn-start" class="btn-primary" disabled>実験を開始する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EVALUATION SCREEN (A/B with video) ===== -->
+    <div id="screen-eval" class="screen">
+        <div class="eval-header">
+            <div class="eval-info">
+                <span id="eval-subject" class="info-badge"></span>
+                <span id="eval-group" class="info-badge accent"></span>
+            </div>
+            <div class="eval-progress-container">
+                <div class="progress-text">
+                    <span id="progress-current">1</span> / <span id="progress-total">15</span> ペア
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="eval-body">
+            <!-- Video pair area -->
+            <div id="video-area" class="video-area">
+                <div class="video-panel" id="panel-left">
+                    <div class="video-label" id="label-left">A1</div>
+                    <video id="video-left" loop playsinline muted></video>
+                    <div class="video-controls">
+                        <button class="btn-play" data-target="video-left">▶ 再生</button>
+                    </div>
+                </div>
+                <div class="vs-divider">VS</div>
+                <div class="video-panel" id="panel-right">
+                    <div class="video-label" id="label-right">A2</div>
+                    <video id="video-right" loop playsinline muted></video>
+                    <div class="video-controls">
+                        <button class="btn-play" data-target="video-right">▶ 再生</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evaluation items area -->
+            <div class="eval-items-container">
+                <div class="eval-items-header">
+                    <div class="scale-labels">
+                        <span id="scale-left-name" class="scale-end">← 左がかなり良い</span>
+                        <span class="scale-center">同じ</span>
+                        <span id="scale-right-name" class="scale-end">右がかなり良い →</span>
+                    </div>
+                </div>
+                <div id="eval-items" class="eval-items">
+                    <!-- Dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <div class="eval-footer">
+            <button id="btn-prev" class="btn-secondary" disabled>← 前のペア</button>
+            <button id="btn-next" class="btn-primary" disabled>次のペア →</button>
+        </div>
+    </div>
+
+    <!-- ===== EVALUATION SCREEN C (no video, table only) ===== -->
+    <div id="screen-eval-c" class="screen">
+        <div class="eval-header">
+            <div class="eval-info">
+                <span id="eval-subject-c" class="info-badge"></span>
+                <span id="eval-group-c" class="info-badge accent"></span>
+            </div>
+            <div class="eval-progress-container">
+                <div class="progress-text">
+                    <span id="progress-current-c">1</span> / <span id="progress-total-c">3</span> ペア
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill-c" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="eval-body eval-body-c">
+            <div class="pair-label-c">
+                <span class="pair-item-c left" id="c-left-label">C1（大）</span>
+                <span class="vs-text">VS</span>
+                <span class="pair-item-c right" id="c-right-label">C2（中）</span>
+            </div>
+            <div class="eval-items-container eval-items-container-c">
+                <div class="eval-items-header">
+                    <div class="scale-labels">
+                        <span id="scale-left-name-c" class="scale-end">← 左がかなり良い</span>
+                        <span class="scale-center">同じ</span>
+                        <span id="scale-right-name-c" class="scale-end">右がかなり良い →</span>
+                    </div>
+                </div>
+                <div id="eval-items-c" class="eval-items">
+                    <!-- Dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <div class="eval-footer">
+            <button id="btn-prev-c" class="btn-secondary" disabled>← 前のペア</button>
+            <button id="btn-next-c" class="btn-primary" disabled>次のペア →</button>
+        </div>
+    </div>
+
+    <!-- ===== RESULT SCREEN ===== -->
+    <div id="screen-result" class="screen">
+        <div class="result-container">
+            <div class="result-icon">✅</div>
+            <h2>評価完了</h2>
+            <p class="result-summary" id="result-summary"></p>
+            <div class="result-actions">
+                <button id="btn-download" class="btn-primary">📊 CSVダウンロード</button>
+                <button id="btn-new" class="btn-secondary">新しい被験者で開始</button>
+            </div>
+            <div id="result-table-container" class="result-table-container">
+                <!-- Summary table -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== HISTORY PANEL ===== -->
+    <button id="btn-history-toggle" class="history-toggle" title="実験記録">
+        <span class="history-icon">📁</span>
+        <span id="history-count" class="history-count">0</span>
+    </button>
+    <div id="history-panel" class="history-panel">
+        <div class="history-header">
+            <h3>📁 実験記録</h3>
+            <button id="btn-history-close" class="history-close">✕</button>
+        </div>
+        <div class="history-actions-top">
+            <button id="btn-download-all" class="btn-secondary btn-sm">📦 全データCSV一括DL</button>
+        </div>
+        <div id="history-list" class="history-list">
+            <!-- Dynamically generated -->
+        </div>
+    </div>
+    <div id="history-overlay" class="history-overlay"></div>
+
+    <script>
+/* ========================================
+   一対比較法 iPad Web App - Main Logic
+   ======================================== */
+
+// ===== EXPERIMENT DEFINITIONS =====
+const EXPERIMENTS = {
+    A: {
+        name: '実験A（FOV × 動線）',
+        conditions: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6'],
+        conditionLabels: {
+            A1: 'A1（単純動線・広FOV）',
+            A2: 'A2（中動線・広FOV）',
+            A3: 'A3（複雑動線・広FOV）',
+            A4: 'A4（単純動線・狭FOV）',
+            A5: 'A5（中動線・狭FOV）',
+            A6: 'A6（複雑動線・狭FOV）'
+        },
+        items: ['臨場感', '空間の明瞭性', '開放感', '操作がしやすい', '鑑賞動線が分かりやすい', '集中できる'],
+        hasVideo: false
+    },
+    B: {
+        name: '実験B（照明 × BGM）',
+        conditions: ['B1', 'B2', 'B3', 'B4'],
+        conditionLabels: {
+            B1: 'B1（室内光・BGMあり）',
+            B2: 'B2（室内光・BGMなし）',
+            B3: 'B3（室内+外光・BGMあり）',
+            B4: 'B4（室内+外光・BGMなし）'
+        },
+        items: ['臨場感', '雰囲気がいい', 'リラックスできる', '現実感', '心地よい', '光質が良い', '集中できる'],
+        hasVideo: false
+    },
+    C: {
+        name: '実験C（作品サイズ）',
+        conditions: ['C1', 'C2', 'C3'],
+        conditionLabels: {
+            C1: 'C1（大）',
+            C2: 'C2（中）',
+            C3: 'C3（小）'
+        },
+        items: ['臨場感', '集中できる', '作品が見やすい', '迫力がある', '視線が散らない'],
+        hasVideo: false
+    }
+};
+
+// ===== STATE =====
+let state = {
+    subjectId: '',
+    group: null,
+    experiment: null,
+    pairs: [],
+    currentPairIndex: 0,
+    responses: {}, // key: `${pairIndex}_${itemIndex}`, value: 1-5
+    startTime: null,
+    pairStartTime: null
+};
+
+// ===== DOM ELEMENTS =====
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+    initStartScreen();
+    initEvalScreen();
+    initEvalScreenC();
+    initResultScreen();
+    initHistoryPanel();
+});
+
+// ===== START SCREEN =====
+function initStartScreen() {
+    const subjectInput = $('#subject-id');
+    const groupBtns = $$('.group-btn');
+    const startBtn = $('#btn-start');
+
+    groupBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            groupBtns.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            state.group = btn.dataset.group;
+            updateStartBtn();
+        });
+    });
+
+    subjectInput.addEventListener('input', () => {
+        state.subjectId = subjectInput.value.trim();
+        updateStartBtn();
+    });
+
+    startBtn.addEventListener('click', () => {
+        if (!state.subjectId || !state.group) return;
+        startExperiment();
+    });
+
+    function updateStartBtn() {
+        startBtn.disabled = !(state.subjectId && state.group);
+    }
+}
+
+// ===== PAIR GENERATION =====
+function generatePairs(conditions) {
+    const pairs = [];
+    for (let i = 0; i < conditions.length; i++) {
+        for (let j = i + 1; j < conditions.length; j++) {
+            pairs.push([conditions[i], conditions[j]]);
+        }
+    }
+    // Shuffle with Fisher-Yates
+    for (let i = pairs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+    }
+    // Randomly swap left/right within each pair
+    pairs.forEach(pair => {
+        if (Math.random() > 0.5) {
+            [pair[0], pair[1]] = [pair[1], pair[0]];
+        }
+    });
+    return pairs;
+}
+
+// ===== START EXPERIMENT =====
+function startExperiment() {
+    state.experiment = EXPERIMENTS[state.group];
+    state.pairs = generatePairs(state.experiment.conditions);
+    state.currentPairIndex = 0;
+    state.responses = {};
+    state.startTime = new Date();
+    state.pairStartTime = new Date();
+
+    showScreen('screen-eval-c');
+    setupEvalPairC();
+}
+
+// ===== SCREEN MANAGEMENT =====
+function showScreen(id) {
+    $$('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
+
+    // Pause any playing videos
+    $$('video').forEach(v => {
+        v.pause();
+        v.currentTime = 0;
+    });
+
+    const screen = $(`#${id}`);
+    screen.style.display = 'flex';
+    // Force reflow for CSS transition
+    void screen.offsetWidth;
+    screen.classList.add('active');
+}
+
+// ===== EVAL SCREEN (A/B) =====
+function initEvalScreen() {
+    // Play button handlers
+    $$('.btn-play').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const vid = $(`#${btn.dataset.target}`);
+            if (vid.paused) {
+                vid.play();
+                btn.textContent = '⏸ 一時停止';
+                btn.classList.add('playing');
+            } else {
+                vid.pause();
+                btn.textContent = '▶ 再生';
+                btn.classList.remove('playing');
+            }
+        });
+    });
+
+    $('#btn-prev').addEventListener('click', () => {
+        if (state.currentPairIndex > 0) {
+            state.currentPairIndex--;
+            setupEvalPair();
+        }
+    });
+
+    $('#btn-next').addEventListener('click', () => {
+        if (!allItemsAnswered()) return;
+        state.currentPairIndex++;
+        state.pairStartTime = new Date();
+        if (state.currentPairIndex >= state.pairs.length) {
+            showResults();
+        } else {
+            setupEvalPair();
+        }
+    });
+}
+
+function setupEvalPair() {
+    const pair = state.pairs[state.currentPairIndex];
+    const exp = state.experiment;
+
+    // Update header
+    $('#eval-subject').textContent = `被験者：${state.subjectId}`;
+    $('#eval-group').textContent = exp.name;
+    $('#progress-current').textContent = state.currentPairIndex + 1;
+    $('#progress-total').textContent = state.pairs.length;
+    const pct = ((state.currentPairIndex) / state.pairs.length) * 100;
+    $('#progress-fill').style.width = pct + '%';
+
+    // Update videos
+    const videoLeft = $('#video-left');
+    const videoRight = $('#video-right');
+    videoLeft.src = pair[0] + exp.videoExt;
+    videoRight.src = pair[1] + exp.videoExt;
+
+    // Reset play buttons
+    $$('.btn-play').forEach(btn => {
+        btn.textContent = '▶ 再生';
+        btn.classList.remove('playing');
+    });
+
+    // Update labels
+    const labels = exp.conditionLabels;
+    $('#label-left').textContent = labels[pair[0]] || pair[0];
+    $('#label-right').textContent = labels[pair[1]] || pair[1];
+    $('#scale-left-name').textContent = `← ${pair[0]} がかなり良い`;
+    $('#scale-right-name').textContent = `${pair[1]} がかなり良い →`;
+
+    // Generate items
+    renderEvalItems('eval-items', exp.items);
+
+    // Update nav buttons
+    $('#btn-prev').disabled = state.currentPairIndex === 0;
+    updateNextButton();
+}
+
+// ===== EVAL SCREEN C (Table Only) =====
+function initEvalScreenC() {
+    $('#btn-prev-c').addEventListener('click', () => {
+        if (state.currentPairIndex > 0) {
+            state.currentPairIndex--;
+            setupEvalPairC();
+        }
+    });
+
+    $('#btn-next-c').addEventListener('click', () => {
+        if (!allItemsAnsweredC()) return;
+        state.currentPairIndex++;
+        state.pairStartTime = new Date();
+        if (state.currentPairIndex >= state.pairs.length) {
+            showResults();
+        } else {
+            setupEvalPairC();
+        }
+    });
+}
+
+function setupEvalPairC() {
+    const pair = state.pairs[state.currentPairIndex];
+    const exp = state.experiment;
+
+    // Update header
+    $('#eval-subject-c').textContent = `被験者：${state.subjectId}`;
+    $('#eval-group-c').textContent = exp.name;
+    $('#progress-current-c').textContent = state.currentPairIndex + 1;
+    $('#progress-total-c').textContent = state.pairs.length;
+    const pct = ((state.currentPairIndex) / state.pairs.length) * 100;
+    $('#progress-fill-c').style.width = pct + '%';
+
+    // Update pair labels
+    const labels = exp.conditionLabels;
+    $('#c-left-label').textContent = labels[pair[0]] || pair[0];
+    $('#c-right-label').textContent = labels[pair[1]] || pair[1];
+    $('#scale-left-name-c').textContent = `← ${pair[0]} がかなり良い`;
+    $('#scale-right-name-c').textContent = `${pair[1]} がかなり良い →`;
+
+    // Generate items
+    renderEvalItems('eval-items-c', exp.items);
+
+    // Update nav buttons
+    $('#btn-prev-c').disabled = state.currentPairIndex === 0;
+    updateNextButtonC();
+}
+
+// ===== SHARED: Render Evaluation Items =====
+function renderEvalItems(containerId, items) {
+    const container = $(`#${containerId}`);
+    container.innerHTML = '';
+
+    items.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'eval-item';
+
+        const label = document.createElement('div');
+        label.className = 'eval-item-label';
+        label.textContent = item;
+
+        const scale = document.createElement('div');
+        scale.className = 'eval-scale';
+
+        const scaleTexts = ['◀◀', '◀', '＝', '▶', '▶▶'];
+        for (let v = 1; v <= 5; v++) {
+            const btn = document.createElement('button');
+            btn.className = 'scale-btn';
+            btn.dataset.value = v;
+            btn.dataset.itemIndex = idx;
+            btn.textContent = scaleTexts[v - 1];
+
+            // Restore previously selected value
+            const key = `${state.currentPairIndex}_${idx}`;
+            if (state.responses[key] === v) {
+                btn.classList.add('selected');
+            }
+
+            btn.addEventListener('click', () => {
+                // Deselect siblings
+                scale.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                // Save response
+                state.responses[key] = v;
+                // Update check mark
+                check.textContent = '✓';
+                check.style.color = 'var(--success)';
+                // Enable next if all answered
+                if (containerId === 'eval-items') {
+                    updateNextButton();
+                } else {
+                    updateNextButtonC();
+                }
+            });
+
+            scale.appendChild(btn);
+        }
+
+        const check = document.createElement('div');
+        check.className = 'eval-item-check';
+        const key = `${state.currentPairIndex}_${idx}`;
+        if (state.responses[key]) {
+            check.textContent = '✓';
+            check.style.color = 'var(--success)';
+        }
+
+        row.appendChild(label);
+        row.appendChild(scale);
+        row.appendChild(check);
+        container.appendChild(row);
+    });
+}
+
+function allItemsAnswered() {
+    const items = state.experiment.items;
+    for (let i = 0; i < items.length; i++) {
+        const key = `${state.currentPairIndex}_${i}`;
+        if (!state.responses[key]) return false;
+    }
+    return true;
+}
+
+function allItemsAnsweredC() {
+    return allItemsAnswered(); // Same logic
+}
+
+function updateNextButton() {
+    const btn = $('#btn-next');
+    if (allItemsAnswered()) {
+        btn.disabled = false;
+        if (state.currentPairIndex === state.pairs.length - 1) {
+            btn.textContent = '評価を完了する ✓';
+        } else {
+            btn.textContent = '次のペア →';
+        }
+    } else {
+        btn.disabled = true;
+        btn.textContent = '全項目を回答してください';
+    }
+}
+
+function updateNextButtonC() {
+    const btn = $('#btn-next-c');
+    if (allItemsAnsweredC()) {
+        btn.disabled = false;
+        if (state.currentPairIndex === state.pairs.length - 1) {
+            btn.textContent = '評価を完了する ✓';
+        } else {
+            btn.textContent = '次のペア →';
+        }
+    } else {
+        btn.disabled = true;
+        btn.textContent = '全項目を回答してください';
+    }
+}
+
+// ===== RESULTS SCREEN =====
+function initResultScreen() {
+    $('#btn-download').addEventListener('click', downloadCSV);
+    $('#btn-new').addEventListener('click', () => {
+        state = {
+            subjectId: '',
+            group: null,
+            experiment: null,
+            pairs: [],
+            currentPairIndex: 0,
+            responses: {},
+            startTime: null,
+            pairStartTime: null
+        };
+        // Reset form
+        $('#subject-id').value = '';
+        $$('.group-btn').forEach(b => b.classList.remove('selected'));
+        $('#btn-start').disabled = true;
+        showScreen('screen-start');
+    });
+}
+
+function showResults() {
+    const endTime = new Date();
+    const elapsed = Math.round((endTime - state.startTime) / 1000);
+    const min = Math.floor(elapsed / 60);
+    const sec = elapsed % 60;
+
+    const totalResponses = state.pairs.length * state.experiment.items.length;
+
+    $('#result-summary').textContent =
+        `被験者：${state.subjectId}　|　${state.experiment.name}　|　` +
+        `${state.pairs.length}ペア × ${state.experiment.items.length}項目 = ${totalResponses}回答　|　` +
+        `所要時間：${min}分${sec}秒`;
+
+    // Build summary table
+    buildResultTable();
+
+    showScreen('screen-result');
+
+    // Also save to localStorage
+    saveToLocalStorage();
+}
+
+function buildResultTable() {
+    const container = $('#result-table-container');
+    container.innerHTML = '';
+
+    const scaleLabels = {
+        1: '◀◀ 左がかなり良い',
+        2: '◀ 左がやや良い',
+        3: '＝ 同じ',
+        4: '▶ 右がやや良い',
+        5: '▶▶ 右がかなり良い'
+    };
+
+    // ===== Section 1: Raw Response Table =====
+    const section1 = document.createElement('div');
+    section1.className = 'result-section';
+
+    const title1 = document.createElement('h3');
+    title1.className = 'result-section-title';
+    title1.textContent = '📋 全回答一覧';
+    section1.appendChild(title1);
+
+    const table = document.createElement('table');
+    table.className = 'result-table';
+
+    // Header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    ['#', 'ペア（左）', 'ペア（右）', '評価項目', '回答', '判定'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Body - one row per pair per item
+    const tbody = document.createElement('tbody');
+    let rowNum = 1;
+    state.pairs.forEach((pair, pi) => {
+        state.experiment.items.forEach((item, ii) => {
+            const row = document.createElement('tr');
+            const key = `${pi}_${ii}`;
+            const val = state.responses[key] || 3;
+
+            // Row number
+            const tdNum = document.createElement('td');
+            tdNum.textContent = rowNum++;
+            tdNum.style.color = 'var(--text-muted)';
+            row.appendChild(tdNum);
+
+            // Left condition
+            const tdLeft = document.createElement('td');
+            tdLeft.textContent = pair[0];
+            if (val <= 2) tdLeft.style.fontWeight = '700';
+            row.appendChild(tdLeft);
+
+            // Right condition
+            const tdRight = document.createElement('td');
+            tdRight.textContent = pair[1];
+            if (val >= 4) tdRight.style.fontWeight = '700';
+            row.appendChild(tdRight);
+
+            // Item name
+            const tdItem = document.createElement('td');
+            tdItem.textContent = item;
+            row.appendChild(tdItem);
+
+            // Scale label
+            const tdScale = document.createElement('td');
+            tdScale.textContent = scaleLabels[val] || val;
+            tdScale.style.fontSize = '12px';
+            if (val <= 2) tdScale.style.color = 'var(--accent-light)';
+            else if (val >= 4) tdScale.style.color = 'var(--success)';
+            else tdScale.style.color = 'var(--text-muted)';
+            row.appendChild(tdScale);
+
+            // Winner
+            const tdWinner = document.createElement('td');
+            tdWinner.style.textAlign = 'center';
+            tdWinner.style.fontWeight = '700';
+            if (val <= 2) {
+                tdWinner.textContent = pair[0];
+                tdWinner.style.color = 'var(--accent-light)';
+            } else if (val >= 4) {
+                tdWinner.textContent = pair[1];
+                tdWinner.style.color = 'var(--success)';
+            } else {
+                tdWinner.textContent = '引き分け';
+                tdWinner.style.color = 'var(--text-muted)';
+            }
+            row.appendChild(tdWinner);
+
+            tbody.appendChild(row);
+        });
+
+        // Add separator between pairs
+        if (pi < state.pairs.length - 1) {
+            const sepRow = document.createElement('tr');
+            sepRow.className = 'pair-separator';
+            const sepTd = document.createElement('td');
+            sepTd.colSpan = 6;
+            sepTd.style.height = '4px';
+            sepTd.style.background = 'var(--bg-primary)';
+            sepTd.style.padding = '0';
+            sepRow.appendChild(sepTd);
+            tbody.appendChild(sepRow);
+        }
+    });
+    table.appendChild(tbody);
+    section1.appendChild(table);
+    container.appendChild(section1);
+
+    // ===== Section 2: Comparison Matrix per Item =====
+    const section2 = document.createElement('div');
+    section2.className = 'result-section';
+
+    const title2 = document.createElement('h3');
+    title2.className = 'result-section-title';
+    title2.textContent = '📊 評価項目別 一対比較マトリクス';
+    section2.appendChild(title2);
+
+    const conditions = state.experiment.conditions;
+
+    state.experiment.items.forEach((item, ii) => {
+        const itemTitle = document.createElement('div');
+        itemTitle.className = 'matrix-item-title';
+        itemTitle.textContent = `【${item}】`;
+        section2.appendChild(itemTitle);
+
+        const matrixTable = document.createElement('table');
+        matrixTable.className = 'result-table matrix-table';
+
+        // Matrix header
+        const mThead = document.createElement('thead');
+        const mHeaderRow = document.createElement('tr');
+        const cornerTh = document.createElement('th');
+        cornerTh.textContent = '↓行 vs 列→';
+        cornerTh.style.fontSize = '11px';
+        mHeaderRow.appendChild(cornerTh);
+        conditions.forEach(c => {
+            const th = document.createElement('th');
+            th.textContent = c;
+            th.style.textAlign = 'center';
+            mHeaderRow.appendChild(th);
+        });
+        mThead.appendChild(mHeaderRow);
+        matrixTable.appendChild(mThead);
+
+        // Matrix body
+        const mTbody = document.createElement('tbody');
+        conditions.forEach((rowCond, ri) => {
+            const mRow = document.createElement('tr');
+            const rowHeader = document.createElement('td');
+            rowHeader.textContent = rowCond;
+            rowHeader.style.fontWeight = '600';
+            mRow.appendChild(rowHeader);
+
+            conditions.forEach((colCond, ci) => {
+                const td = document.createElement('td');
+                td.style.textAlign = 'center';
+
+                if (ri === ci) {
+                    td.textContent = '—';
+                    td.style.color = 'var(--text-muted)';
+                    td.style.background = 'rgba(255,255,255,0.02)';
+                } else {
+                    // Find the pair and its value
+                    let val = null;
+                    state.pairs.forEach((pair, pi) => {
+                        if (pair[0] === rowCond && pair[1] === colCond) {
+                            val = state.responses[`${pi}_${ii}`];
+                        } else if (pair[0] === colCond && pair[1] === rowCond) {
+                            // Reverse: if col was on left, flip the scale
+                            const raw = state.responses[`${pi}_${ii}`];
+                            if (raw) val = 6 - raw; // 1↔5, 2↔4, 3=3
+                        }
+                    });
+
+                    if (val !== null) {
+                        td.textContent = val;
+                        td.style.fontWeight = '600';
+                        if (val <= 2) {
+                            td.style.color = 'var(--accent-light)';
+                            td.style.background = 'rgba(108,92,231,0.1)';
+                        } else if (val >= 4) {
+                            td.style.color = 'var(--success)';
+                            td.style.background = 'rgba(0,206,201,0.1)';
+                        } else {
+                            td.style.color = 'var(--text-muted)';
+                        }
+                    } else {
+                        td.textContent = '-';
+                        td.style.color = 'var(--text-muted)';
+                    }
+                }
+                mRow.appendChild(td);
+            });
+            mTbody.appendChild(mRow);
+        });
+        matrixTable.appendChild(mTbody);
+        section2.appendChild(matrixTable);
+    });
+
+    container.appendChild(section2);
+}
+
+// ===== CSV EXPORT =====
+function generateCSVData() {
+    const rows = [];
+    // Header
+    rows.push(['被験者ID', '実験グループ', 'ペア番号', 'ペア（左）', 'ペア（右）', '評価項目', '回答（1-5）', 'タイムスタンプ'].join(','));
+
+    const timestamp = state.startTime.toISOString();
+
+    state.pairs.forEach((pair, pi) => {
+        state.experiment.items.forEach((item, ii) => {
+            const key = `${pi}_${ii}`;
+            const val = state.responses[key] || '';
+            rows.push([
+                state.subjectId,
+                state.group,
+                pi + 1,
+                pair[0],
+                pair[1],
+                item,
+                val,
+                timestamp
+            ].join(','));
+        });
+    });
+
+    return rows.join('\n');
+}
+
+function downloadCSV() {
+    const csv = '\uFEFF' + generateCSVData(); // UTF-8 BOM for Excel compatibility
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `一対比較_${state.group}_${state.subjectId}_${formatDate(state.startTime)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function formatDate(d) {
+    return d.getFullYear() +
+        String(d.getMonth() + 1).padStart(2, '0') +
+        String(d.getDate()).padStart(2, '0') + '_' +
+        String(d.getHours()).padStart(2, '0') +
+        String(d.getMinutes()).padStart(2, '0');
+}
+
+// ===== LOCAL STORAGE =====
+function saveToLocalStorage() {
+    const key = `paired_comparison_${state.group}_${state.subjectId}_${Date.now()}`;
+    const data = {
+        subjectId: state.subjectId,
+        group: state.group,
+        experimentName: state.experiment.name,
+        pairs: state.pairs,
+        items: state.experiment.items,
+        responses: state.responses,
+        startTime: state.startTime.toISOString(),
+        endTime: new Date().toISOString()
+    };
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        updateHistoryUI();
+    } catch (e) {
+        console.warn('LocalStorage save failed:', e);
+    }
+}
+
+// ===== HISTORY PANEL =====
+function initHistoryPanel() {
+    const panel = $('#history-panel');
+    const overlay = $('#history-overlay');
+
+    $('#btn-history-toggle').addEventListener('click', () => {
+        panel.classList.add('open');
+        overlay.classList.add('visible');
+        renderHistoryList();
+    });
+
+    $('#btn-history-close').addEventListener('click', closeHistory);
+    overlay.addEventListener('click', closeHistory);
+
+    $('#btn-download-all').addEventListener('click', downloadAllCSV);
+
+    // Initial count
+    updateHistoryUI();
+}
+
+function closeHistory() {
+    $('#history-panel').classList.remove('open');
+    $('#history-overlay').classList.remove('visible');
+}
+
+function getHistoryRecords() {
+    const records = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('paired_comparison_')) {
+            try {
+                const data = JSON.parse(localStorage.getItem(key));
+                data._key = key;
+                records.push(data);
+            } catch (e) { /* skip invalid */ }
+        }
+    }
+    // Sort by time, newest first
+    records.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+    return records;
+}
+
+function updateHistoryUI() {
+    const records = getHistoryRecords();
+    const countEl = $('#history-count');
+    countEl.textContent = records.length;
+    if (records.length === 0) {
+        countEl.classList.add('empty');
+    } else {
+        countEl.classList.remove('empty');
+    }
+}
+
+function renderHistoryList() {
+    const list = $('#history-list');
+    const records = getHistoryRecords();
+
+    if (records.length === 0) {
+        list.innerHTML = '<div class="history-empty">まだ実験記録がありません</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    records.forEach(record => {
+        const card = document.createElement('div');
+        card.className = 'history-card';
+
+        const startDate = new Date(record.startTime);
+        const endDate = new Date(record.endTime);
+        const elapsed = Math.round((endDate - startDate) / 1000);
+        const min = Math.floor(elapsed / 60);
+        const sec = elapsed % 60;
+
+        const totalResponses = record.pairs.length * (record.items ? record.items.length : 0);
+
+        card.innerHTML = `
+            <div class="history-card-header">
+                <span class="history-card-id">👤 ${record.subjectId}</span>
+                <span class="history-card-group">${record.experimentName || record.group}</span>
+            </div>
+            <div class="history-card-meta">
+                📅 ${startDate.toLocaleDateString('ja-JP')} ${startDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
+                　⏱ ${min}分${sec}秒　📝 ${totalResponses}回答
+            </div>
+            <div class="history-card-actions">
+                <button class="btn-dl" data-key="${record._key}">📥 CSV</button>
+                <button class="btn-delete" data-key="${record._key}">🗑 削除</button>
+            </div>
+        `;
+
+        // Download button
+        card.querySelector('.btn-dl').addEventListener('click', () => {
+            downloadRecordCSV(record);
+        });
+
+        // Delete button
+        card.querySelector('.btn-delete').addEventListener('click', () => {
+            if (confirm(`${record.subjectId} の記録を削除しますか？`)) {
+                localStorage.removeItem(record._key);
+                updateHistoryUI();
+                renderHistoryList();
+            }
+        });
+
+        list.appendChild(card);
+    });
+}
+
+function downloadRecordCSV(record) {
+    const rows = [];
+    rows.push(['被験者ID', '実験グループ', 'ペア番号', 'ペア（左）', 'ペア（右）', '評価項目', '回答（1-5）', 'タイムスタンプ'].join(','));
+
+    const items = record.items || [];
+    record.pairs.forEach((pair, pi) => {
+        items.forEach((item, ii) => {
+            const key = `${pi}_${ii}`;
+            const val = record.responses[key] || '';
+            rows.push([
+                record.subjectId,
+                record.group,
+                pi + 1,
+                pair[0],
+                pair[1],
+                item,
+                val,
+                record.startTime
+            ].join(','));
+        });
+    });
+
+    const csv = '\uFEFF' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const d = new Date(record.startTime);
+    a.download = `一対比較_${record.group}_${record.subjectId}_${formatDate(d)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function downloadAllCSV() {
+    const records = getHistoryRecords();
+    if (records.length === 0) {
+        alert('まだ実験記録がありません');
+        return;
+    }
+
+    const rows = [];
+    rows.push(['被験者ID', '実験グループ', 'ペア番号', 'ペア（左）', 'ペア（右）', '評価項目', '回答（1-5）', '開始時刻', '終了時刻'].join(','));
+
+    records.forEach(record => {
+        const items = record.items || [];
+        record.pairs.forEach((pair, pi) => {
+            items.forEach((item, ii) => {
+                const key = `${pi}_${ii}`;
+                const val = record.responses[key] || '';
+                rows.push([
+                    record.subjectId,
+                    record.group,
+                    pi + 1,
+                    pair[0],
+                    pair[1],
+                    item,
+                    val,
+                    record.startTime,
+                    record.endTime
+                ].join(','));
+            });
+        });
+    });
+
+    const csv = '\uFEFF' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `一対比較_全データ_${formatDate(new Date())}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+</script>
+</body>
+
+</html>
